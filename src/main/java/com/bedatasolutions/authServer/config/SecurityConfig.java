@@ -10,10 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +22,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -44,7 +46,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -85,17 +86,21 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) ->
+        http
+                .csrf((csrf) -> csrf
+                        .ignoringRequestMatchers("/api/v1/auth/login") // Disable CSRF for this endpoint
+                )
+                .authorizeHttpRequests((authorize) ->
                         authorize
-                                .requestMatchers("/api/v1/resource/public", "/api/v1/token")
+                                .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login")
                                 .permitAll()
                                 .requestMatchers("/api/v1/resource/protected-resource", "/api/v1/resource/secured")
                                 .hasRole("USER")
                                 .anyRequest().authenticated()
                 )
-//                .oauth2ResourceServer((resourceServer) ->
-//                        resourceServer.jwt(customizer -> customizer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-//                ) // Validate JWT tokens for secured endpoints
+                .oauth2ResourceServer((resourceServer) ->
+                        resourceServer.jwt(customizer -> customizer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                ) // Validate JWT tokens for secured endpoints
                 .oauth2ResourceServer((resourceServer) ->
                         resourceServer.jwt(Customizer.withDefaults())
                 ) // Validate JWT tokens for secured endpoints
@@ -173,12 +178,17 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+        return new NimbusJwtEncoder(jwkSource);
+    }
+
+    @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().build();
     }
 
     // Custom Token Customizer
-    /*@Bean
+    @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
         return (context) -> {
             if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
@@ -194,16 +204,16 @@ public class SecurityConfig {
 
                     Set<String> scopes = context.getAuthorizedScopes();
                     System.out.println("Scopes are: " + scopes);
-                    // scopes.add("user:read");
-                    // scopes.add("user:write");
-                    // scopes.add("user:delete");
-                    // claims.put("scopes", scopes);
+//                     scopes.add("user:read");
+//                     scopes.add("user:write");
+//                     scopes.add("user:delete");
+//                     claims.put("scopes", scopes);
                 });
             }
         };
-    }*/
+    }
 
-    /*@Bean
+    @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // Optional: Set or remove role prefix
@@ -212,5 +222,11 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return converter;
-    }*/
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
 }
