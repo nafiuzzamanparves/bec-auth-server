@@ -88,11 +88,11 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers("/api/v1/auth/login") // Disable CSRF for this endpoint
+                        .ignoringRequestMatchers("/api/v1/auth/login", "/api/v1/auth/token/refresh") // Disable CSRF for this endpoint
                 )
                 .authorizeHttpRequests((authorize) ->
                         authorize
-                                .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login")
+                                .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login", "/api/v1/auth/token/refresh")
                                 .permitAll()
                                 .requestMatchers("/api/v1/resource/protected-resource", "/api/v1/resource/secured")
                                 .hasRole("USER")
@@ -134,7 +134,9 @@ public class SecurityConfig {
                 .clientId("oidc-client")
                 .clientSecret("{noop}secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri(redirectUri)
                 .postLogoutRedirectUri(postLogoutRedirectUri)
@@ -204,10 +206,6 @@ public class SecurityConfig {
 
                     Set<String> scopes = context.getAuthorizedScopes();
                     System.out.println("Scopes are: " + scopes);
-//                     scopes.add("user:read");
-//                     scopes.add("user:write");
-//                     scopes.add("user:delete");
-//                     claims.put("scopes", scopes);
                 });
             }
         };
