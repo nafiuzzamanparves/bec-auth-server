@@ -2,6 +2,7 @@ package com.bedatasolutions.authServer.dao.mapEntity;
 
 import com.bedatasolutions.authServer.dao.PermissionDao;
 import com.bedatasolutions.authServer.dao.ResourceDao;
+import com.bedatasolutions.authServer.dao.compositeKey.MapResourcePermissionKey;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,17 +13,16 @@ import lombok.Setter;
 @Table(name = "map_resource_permission", schema = "dbo")
 public class MapResourcePermissionDao {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private MapResourcePermissionKey id;
 
-    // Many-to-one relationship with ResourceDao
     @ManyToOne
+    @MapsId("resourceId")
     @JoinColumn(name = "resource_id", nullable = false)
     private ResourceDao resource;
 
-    // Many-to-one relationship with PermissionDao
     @ManyToOne
+    @MapsId("permissionId")
     @JoinColumn(name = "permission_id", nullable = false)
     private PermissionDao permission;
 

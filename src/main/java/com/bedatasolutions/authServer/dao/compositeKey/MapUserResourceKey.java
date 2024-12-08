@@ -1,13 +1,11 @@
 package com.bedatasolutions.authServer.dao.compositeKey;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -16,22 +14,16 @@ import java.util.Objects;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResourceKey implements Serializable {
+public class MapUserResourceKey implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = -7241309041997097678L;
-
-    @Column(name = "user_id")
     public Long userId;
-
-    @Column(name = "resource_id")
-    public String resourceId;
+    public Long resourceId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserResourceKey that = (UserResourceKey) o;
+        MapUserResourceKey that = (MapUserResourceKey) o;
         return Objects.equals(userId, that.userId) && Objects.equals(resourceId, that.resourceId);
     }
 
