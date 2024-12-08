@@ -26,12 +26,8 @@ public class PermissionController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<PermissionResponseDTO>>> getAllPermissions() {
-        try {
-            List<PermissionResponseDTO> permissionResponseDTOList = permissionService.getAllPermissions();
-            return ResponseEntity.ok(ApiResponse.success(permissionResponseDTOList, "Fetched all permission successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.ok(ApiResponse.error(e.getMessage()));
-        }
+        List<PermissionResponseDTO> permissions = permissionService.getAllPermissions();
+        return ResponseEntity.ok(ApiResponse.success(permissions, "Fetched all permissions successfully"));
     }
 
     @GetMapping("/{id}")
@@ -46,35 +42,24 @@ public class PermissionController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<PermissionResponseDTO>> createPermission(@RequestBody @Valid PermissionCreateDTO createDTO) {
-        PermissionResponseDTO permission = permissionService.savePermission(createDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(permission, "Permission fetched successfully"));
+        PermissionResponseDTO createdPermission = permissionService.savePermission(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(createdPermission, "Permission created successfully"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PermissionResponseDTO>> updatePermission(@PathVariable Long id, @RequestBody @Valid PermissionUpdateDTO updateDTO) {
-        try {
-            PermissionResponseDTO permission = permissionService.updatePermission(id, updateDTO);
-            if (permission != null) {
-                return ResponseEntity.ok(ApiResponse.success(permission, "Permission updated successfully"));
-            } else {
-                return ResponseEntity.ok(ApiResponse.failed("Failed to update permission"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.ok(ApiResponse.error(e.getMessage()));
-        }
+        return permissionService.updatePermission(id, updateDTO) != null
+                ? ResponseEntity.ok(ApiResponse.success(permissionService.updatePermission(id, updateDTO), "Permission updated successfully"))
+                : ResponseEntity.ok(ApiResponse.failed("Failed to update permission or permission not found"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<?>> deletePermission(@PathVariable Long id) {
-        try {
-            if (permissionService.getPermissionById(id).isEmpty()) {
-                return ResponseEntity.ok(ApiResponse.success("No permission found"));
-            } else {
-                permissionService.deletePermission(id);
-                return ResponseEntity.ok(ApiResponse.success("Permission deleted"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.ok(ApiResponse.error(e.getMessage()));
+    public ResponseEntity<ApiResponse<String>> deletePermission(@PathVariable Long id) {
+        if (permissionService.getPermissionById(id).isEmpty()) {
+            return ResponseEntity.ok(ApiResponse.failed("Permission not found"));
         }
+        permissionService.deletePermission(id);
+        return ResponseEntity.ok(ApiResponse.success("Permission deleted successfully"));
     }
 }
