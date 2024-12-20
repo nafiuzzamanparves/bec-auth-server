@@ -126,7 +126,7 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(userDetails, user);
     }
 
-    @Bean
+    /*@Bean
     public RegisteredClientRepository registeredClientRepository() {
         // System.out.println("Redirect URI: " + redirectUri);
         // System.out.println("Post Logout Redirect URI: " + postLogoutRedirectUri);
@@ -146,7 +146,7 @@ public class SecurityConfig {
                 .build();
 
         return new InMemoryRegisteredClientRepository(oidcClient);
-    }
+    }*/
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
