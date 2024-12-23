@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.config;
 
-import com.bedatasolutions.authServer.dao.Client;
-import com.bedatasolutions.authServer.repository.ClientRepository;
+import com.bedatasolutions.authServer.dao.client.Client;
+import com.bedatasolutions.authServer.repository.client.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -28,8 +28,9 @@ public class AppInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        final String clientId = "oidc-client";
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("oidc-client")
+                .clientId(clientId)
                 .clientSecret("{noop}secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
@@ -44,7 +45,7 @@ public class AppInitializer implements CommandLineRunner {
                 .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(30)).build())
                 .build();
 
-        Optional<Client> existingClient = clientRepository.findByClientId("oidc-client");
+        Optional<Client> existingClient = clientRepository.findByClientId(clientId);
         if (existingClient.isEmpty()) {
             registeredClientRepository.save(oidcClient);
             System.out.println("Registered Client saved to the database!");

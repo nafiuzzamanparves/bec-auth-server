@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.dao;
+package com.bedatasolutions.authServer.dao.client;
 
 import jakarta.persistence.*;
 

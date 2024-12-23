@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.config;
 
-import com.bedatasolutions.authServer.dao.Client;
-import com.bedatasolutions.authServer.repository.ClientRepository;
+import com.bedatasolutions.authServer.dao.client.Client;
+import com.bedatasolutions.authServer.repository.client.ClientRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -47,23 +47,23 @@ public class UserDao {
     private Date updatedAt;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isAccountNonExpired;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isAccountNonLocked;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isCredentialsNonExpired;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean enabled;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean idRoleResourceAccess;
 
     @ManyToMany

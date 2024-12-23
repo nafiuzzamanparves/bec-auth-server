@@ -1,6 +1,6 @@
-package com.bedatasolutions.authServer.repository;
+package com.bedatasolutions.authServer.repository.client;
 
-import com.bedatasolutions.authServer.dao.Client;
+import com.bedatasolutions.authServer.dao.client.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -41,6 +41,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -80,7 +83,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer((resourceServer) ->
                         resourceServer.jwt(Customizer.withDefaults()));
 
-        return http.build();
+        return http.cors(Customizer.withDefaults()).build();
     }
 
     @Bean
@@ -106,7 +109,19 @@ public class SecurityConfig {
                 ) // Validate JWT tokens for secured endpoints
                 .formLogin(Customizer.withDefaults()); // Form login handles the redirect to the login page from the authorization server filter chain
 
-        return http.build();
+        return http.cors(Customizer.withDefaults()).build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addAllowedOrigin("http://127.0.0.1:4200");
+        config.setAllowCredentials(true);
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
