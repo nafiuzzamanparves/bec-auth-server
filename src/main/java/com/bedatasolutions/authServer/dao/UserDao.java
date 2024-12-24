@@ -1,18 +1,24 @@
 package com.bedatasolutions.authServer.dao;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "t_users", schema = "dbo")
 public class UserDao {
@@ -64,7 +70,19 @@ public class UserDao {
 
     @Column(nullable = false)
     @ColumnDefault("1")
-    private Boolean idRoleResourceAccess;
+    private Boolean isRoleResourceAccess;
+
+    private String mfaSecret;
+
+    private String mfaKeyId;
+
+    @Column(nullable = false)
+    @ColumnDefault("1")
+    private Boolean mfaEnabled;
+
+    @Column(nullable = false)
+    @ColumnDefault("1")
+    private Boolean mfaRegistered;
 
     @ManyToMany
     @JoinTable(
@@ -81,4 +99,7 @@ public class UserDao {
             inverseJoinColumns = @JoinColumn(name = "resource_id")
     )
     private Set<ResourceDao> resources = new HashSet<>();
+
+    @Transient
+    private List<GrantedAuthority> authorities;
 }
