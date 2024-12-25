@@ -3,8 +3,6 @@ package com.bedatasolutions.authServer.config;
 
 import com.bedatasolutions.authServer.dao.client.Authorization;
 import com.bedatasolutions.authServer.repository.client.AuthorizationRepository;
-import com.bedatasolutions.authServer.service.CustomUserDetails;
-import com.bedatasolutions.authServer.service.CustomUserDetailsMixin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,7 +45,6 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
         this.objectMapper.registerModules(securityModules);
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
-        this.objectMapper.addMixIn(CustomUserDetails.class, CustomUserDetailsMixin.class);
     }
 
     @Override
