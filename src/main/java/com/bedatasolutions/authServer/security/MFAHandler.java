@@ -39,12 +39,11 @@ public class MFAHandler implements AuthenticationSuccessHandler {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             if (!userDetails.getUser().getMfaEnabled()) {
                 mfaNotEnabled.onAuthenticationSuccess(request, response, authentication);
-                return;
             }
+        } else {
+            saveAuthentication(request, response, new MFAAuthentication(authentication, authority));
+            this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
         }
-
-        saveAuthentication(request, response, new MFAAuthentication(authentication, authority));
-        this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
     }
 
     private void saveAuthentication(HttpServletRequest request,

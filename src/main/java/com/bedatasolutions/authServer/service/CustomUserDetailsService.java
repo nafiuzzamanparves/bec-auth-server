@@ -5,11 +5,14 @@ import com.bedatasolutions.authServer.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -23,7 +26,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<String> authorities = new ArrayList<>();
         AtomicReference<CustomUserDetails> customUserDetails = new AtomicReference<>();
         // AuthorityUtils.createAuthorityList(authorities)
-        userRepository.findByFullName(userName).ifPresent(user -> {
+        Optional<UserDao> byFullName = userRepository.findByFullName(userName);
+
+        byFullName.ifPresent(user -> {
             if (userName.equals(user.getFullName())) {
                 customUserDetails.set(new CustomUserDetails(
                         new UserDao(user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getAge(), user.getAddress(), user.getPassword()

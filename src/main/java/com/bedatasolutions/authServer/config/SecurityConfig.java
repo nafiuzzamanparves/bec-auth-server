@@ -1,5 +1,7 @@
 package com.bedatasolutions.authServer.config;
 
+import com.bedatasolutions.authServer.security.CustomFailureHandler;
+import com.bedatasolutions.authServer.security.MFAHandler;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -19,27 +21,22 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -70,18 +67,16 @@ public class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
         http
-                // Redirect to the login page when not authenticated from the
-                // authorization endpoint
-                .exceptionHandling(
-                        (exceptions) ->
-                                exceptions.defaultAuthenticationEntryPointFor(
-                                        new LoginUrlAuthenticationEntryPoint("/login"),
-                                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                                )
+                // Redirect to the login page when not authenticated from the authorization endpoint
+                .exceptionHandling((exceptions) -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        )
                 )
                 // Accept access tokens for User Info and/or Client Registration
-                .oauth2ResourceServer((resourceServer) ->
-                        resourceServer.jwt(Customizer.withDefaults()));
+                .oauth2ResourceServer((resourceServer) -> resourceServer
+                        .jwt(Customizer.withDefaults()));
 
         return http.cors(Customizer.withDefaults()).build();
     }
@@ -93,21 +88,29 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf
                         .ignoringRequestMatchers("/api/v1/auth/login", "/api/v1/auth/token/refresh") // Disable CSRF for this endpoint
                 )
-                .authorizeHttpRequests((authorize) ->
-                        authorize
-                                .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login", "/api/v1/auth/token/refresh")
-                                .permitAll()
-                                .requestMatchers("/api/v1/resource/protected-resource", "/api/v1/resource/secured")
-                                .hasRole("USER")
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/registration", "/authenticator").hasAuthority("ROLE_MFA_REQUIRED")
+                        .requestMatchers("/security-question").hasAuthority("ROLE_SECURITY_QUESTION_REQUIRED")
+                        .requestMatchers("/api/v1/resource/protected-resource", "/api/v1/resource/secured").hasRole("USER")
+                        .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login", "/api/v1/auth/token/refresh").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer((resourceServer) ->
-                        resourceServer.jwt(customizer -> customizer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                ) // Validate JWT tokens for secured endpoints
-                .oauth2ResourceServer((resourceServer) ->
-                        resourceServer.jwt(Customizer.withDefaults())
-                ) // Validate JWT tokens for secured endpoints
-                .formLogin(Customizer.withDefaults()); // Form login handles the redirect to the login page from the authorization server filter chain
+                // Validate JWT tokens for secured endpoints
+                .oauth2ResourceServer((resourceServer) -> resourceServer
+                        .jwt(customizer -> customizer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                )
+                // Validate JWT tokens for secured endpoints
+                .oauth2ResourceServer((resourceServer) -> resourceServer
+                        .jwt(Customizer.withDefaults())
+                )
+                // Form login handles the redirect to the login page from the authorization server filter chain
+                .formLogin(formLogin -> formLogin
+                                .loginPage("/login")
+                                .successHandler(new MFAHandler("/authenticator", "ROLE_MFA_REQUIRED"))
+                                .failureHandler(new CustomFailureHandler("/login?error"))
+                        // .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"))
+                );
 
         return http.cors(Customizer.withDefaults()).build();
     }
@@ -125,6 +128,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new SavedRequestAwareAuthenticationSuccessHandler();
+    }
+
+    /*@Bean
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.withDefaultPasswordEncoder()
                 .username("user")
@@ -139,7 +147,7 @@ public class SecurityConfig {
                 .build();
 
         return new InMemoryUserDetailsManager(userDetails, user);
-    }
+    }*/
 
     /*@Bean
     public RegisteredClientRepository registeredClientRepository() {

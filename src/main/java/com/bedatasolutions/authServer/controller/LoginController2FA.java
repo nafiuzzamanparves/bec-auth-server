@@ -2,7 +2,6 @@ package com.bedatasolutions.authServer.controller;
 
 import com.bedatasolutions.authServer.dao.UserDao;
 import com.bedatasolutions.authServer.security.MFAAuthentication;
-import com.bedatasolutions.authServer.security.MFAHandler;
 import com.bedatasolutions.authServer.service.AuthenticatorService;
 import com.bedatasolutions.authServer.service.CustomUserDetails;
 import com.bedatasolutions.authServer.service.CustomUserDetailsService;
@@ -20,20 +19,20 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-@RestController
-@RequestMapping("/api/v1/custom/auth")
+@Controller
 public class LoginController2FA {
 
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
     private final AuthenticationFailureHandler authenticatorFailureHandler = new SimpleUrlAuthenticationFailureHandler("/authenticator?error");
-    private final AuthenticationFailureHandler securityQuestionFailureHandler = new SimpleUrlAuthenticationFailureHandler("/security-question?error");
-    private final AuthenticationSuccessHandler securityQuestionSuccessHandler = new MFAHandler("/security-question", "ROLE_SECURITY_QUESTION_REQUIRED");
 
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticatorService authenticatorService;
@@ -52,6 +51,7 @@ public class LoginController2FA {
 
     @GetMapping("/login")
     public String login() {
+        System.out.println("Login controller is being called but not returning the login page");
         return "login";
     }
 
@@ -77,10 +77,10 @@ public class LoginController2FA {
         if (code.equals(generatedCode)) {
             customUserDetailsService.saveUserInfoMfaRegistered(base32Secret, getUser(context).getFullName());
 
-            this.securityQuestionSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
-            return;
+            this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
+        } else {
+            this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
         }
-        this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
     }
 
     @GetMapping("/authenticator")
@@ -97,30 +97,11 @@ public class LoginController2FA {
                              HttpServletResponse response,
                              @CurrentSecurityContext SecurityContext context) throws ServletException, IOException {
         if (this.authenticatorService.check(getUser(context).getMfaSecret(), code)) {
-            this.securityQuestionSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
-            return;
-        }
-        this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
-    }
-
-    /* @GetMapping("/security-question")
-    public String securityQuestion(@CurrentSecurityContext SecurityContext context,Model model) {
-        model.addAttribute("question", getUser(context).securityQuestion());
-        return "security-question";
-    } */
-
-    /* @PostMapping("/security-question")
-    public void validateSecurityQuestion(
-            @RequestParam("answer") String answer,
-            HttpServletRequest request,
-            HttpServletResponse response,
-            @CurrentSecurityContext SecurityContext context) throws ServletException, IOException {
-        if (answer.equals(getUser(context).answer())) {
             this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
-            return;
+        } else {
+            this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
         }
-        this.securityQuestionFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
-    } */
+    }
 
     private Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
         SecurityContext securityContext = SecurityContextHolder.getContext();

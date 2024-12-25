@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 
 @Entity
-@Table(name = "`authorization`")
+@Table(name = "`authorization`", schema = "dbo")
 public class Authorization {
     @Id
     @Column
