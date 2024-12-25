@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -17,55 +16,33 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collections;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${bedata.auth.server.redirect.uri}")
-    private String redirectUri;
-
-    @Value("${bedata.auth.server.post.logout.redirect.uri}")
-    private String postLogoutRedirectUri;
-
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults()); // Enable OpenID Connect 1.0
         http
                 // Redirect to the login page when not authenticated from the authorization endpoint
                 .exceptionHandling((exceptions) -> exceptions
@@ -78,15 +55,16 @@ public class SecurityConfig {
                 .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(Customizer.withDefaults()));
 
-        return http.cors(Customizer.withDefaults()).build();
+        return http.build();
     }
 
     @Bean
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+                // Disable CSRF for this endpoint
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers("/api/v1/auth/login", "/api/v1/auth/token/refresh") // Disable CSRF for this endpoint
+                        .ignoringRequestMatchers("/api/v1/auth/login", "/api/v1/auth/token/refresh")
                 )
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/login").permitAll()
@@ -97,9 +75,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // Validate JWT tokens for secured endpoints
-                .oauth2ResourceServer((resourceServer) -> resourceServer
+                /*.oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(customizer -> customizer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                )
+                )*/
                 // Validate JWT tokens for secured endpoints
                 .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(Customizer.withDefaults())
@@ -109,67 +87,16 @@ public class SecurityConfig {
                                 .loginPage("/login")
                                 .successHandler(new MFAHandler("/authenticator", "ROLE_MFA_REQUIRED"))
                                 .failureHandler(new CustomFailureHandler("/login?error"))
-                        // .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"))
+//                        .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"))
                 );
 
-        return http.cors(Customizer.withDefaults()).build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.addAllowedOrigin("http://127.0.0.1:4200");
-        config.setAllowCredentials(true);
-        source.registerCorsConfiguration("/**", config);
-        return source;
+        return http.build();
     }
 
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new SavedRequestAwareAuthenticationSuccessHandler();
     }
-
-    /*@Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user1")
-                .password("password")
-                .roles("user:read", "user:write", "user:delete", "admin:read", "admin:write", "admin:delete", "developer:read", "developer:write", "developer:delete")
-                .build();
-
-        return new InMemoryUserDetailsManager(userDetails, user);
-    }*/
-
-    /*@Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        // System.out.println("Redirect URI: " + redirectUri);
-        // System.out.println("Post Logout Redirect URI: " + postLogoutRedirectUri);
-        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("oidc-client")
-                .clientSecret("{noop}secret")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri(redirectUri)
-                .postLogoutRedirectUri(postLogoutRedirectUri)
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-
-        return new InMemoryRegisteredClientRepository(oidcClient);
-    }*/
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
@@ -213,7 +140,7 @@ public class SecurityConfig {
     }
 
     // Custom Token Customizer
-    @Bean
+    /*@Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
         return (context) -> {
             if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
@@ -232,9 +159,9 @@ public class SecurityConfig {
                 });
             }
         };
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // Optional: Set or remove role prefix
@@ -243,7 +170,7 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return converter;
-    }
+    }*/
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

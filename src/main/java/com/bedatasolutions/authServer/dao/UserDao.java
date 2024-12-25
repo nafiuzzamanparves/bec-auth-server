@@ -53,23 +53,23 @@ public class UserDao {
     private Date updatedAt;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean isAccountNonExpired;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean isAccountNonLocked;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean isCredentialsNonExpired;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean enabled;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean isRoleResourceAccess;
 
     private String mfaSecret;
@@ -77,14 +77,14 @@ public class UserDao {
     private String mfaKeyId;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean mfaEnabled;
 
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     private Boolean mfaRegistered;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "map_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -92,7 +92,7 @@ public class UserDao {
     )
     private Set<RoleDao> roles = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "map_user_resource",
             joinColumns = @JoinColumn(name = "user_id"),

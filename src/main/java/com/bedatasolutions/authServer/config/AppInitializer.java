@@ -41,7 +41,7 @@ public class AppInitializer implements CommandLineRunner {
                 .postLogoutRedirectUri("http://localhost:8080/logout")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
                 .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(30)).build())
                 .build();
 

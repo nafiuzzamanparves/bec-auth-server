@@ -4,6 +4,7 @@ import com.bedatasolutions.authServer.service.CustomUserDetails;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,15 +17,16 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.io.IOException;
 
+@Slf4j
 public class MFAHandler implements AuthenticationSuccessHandler {
 
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
     private final AuthenticationSuccessHandler mfaNotEnabled = new SavedRequestAwareAuthenticationSuccessHandler();
-
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final String authority;
 
     public MFAHandler(String successUrl, String authority) {
+        log.info("[MFAHandler] Initializing the MFAHandler constructor with successUrl: {} and authority: {}", successUrl, authority);
         SimpleUrlAuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler(successUrl);
         authenticationSuccessHandler.setAlwaysUseDefaultTargetUrl(true);
         this.authenticationSuccessHandler = authenticationSuccessHandler;
@@ -35,24 +37,32 @@ public class MFAHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+        log.info("[MFAHandler] Authentication success triggered for user: {}", authentication.getName());
+
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            log.info("[MFAHandler] User MFA Enabled: {}", userDetails.getUser().getMfaEnabled());
+
             if (!userDetails.getUser().getMfaEnabled()) {
+                log.info("[MFAHandler] MFA not enabled for user. Redirecting using mfaNotEnabled handler.");
                 mfaNotEnabled.onAuthenticationSuccess(request, response, authentication);
+                return;
             }
-        } else {
-            saveAuthentication(request, response, new MFAAuthentication(authentication, authority));
-            this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
         }
+
+        log.info("[MFAHandler] Saving MFAAuthentication and redirecting to success URL.");
+        saveAuthentication(request, response, new MFAAuthentication(authentication, authority));
+        this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
     }
 
     private void saveAuthentication(HttpServletRequest request,
                                     HttpServletResponse response,
                                     MFAAuthentication authentication) {
+        log.info("[MFAHandler] Saving authentication in SecurityContext.");
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
         securityContextRepository.saveContext(securityContext, request, response);
+        log.info("[MFAHandler] Authentication saved successfully in SecurityContext.");
     }
-
 }

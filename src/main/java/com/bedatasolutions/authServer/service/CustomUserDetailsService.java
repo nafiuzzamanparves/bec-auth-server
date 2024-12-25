@@ -2,6 +2,7 @@ package com.bedatasolutions.authServer.service;
 
 import com.bedatasolutions.authServer.dao.UserDao;
 import com.bedatasolutions.authServer.repository.UserRepository;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,7 +35,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         new UserDao(user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getAge(), user.getAddress(), user.getPassword()
                                 , user.getCreatedAt(), user.getUpdatedAt(), user.getIsAccountNonExpired(), user.getIsAccountNonLocked(), user.getIsCredentialsNonExpired()
                                 , user.getEnabled(), user.getIsRoleResourceAccess(), user.getMfaSecret(), user.getMfaKeyId(), user.getMfaEnabled()
-                                , user.getMfaRegistered(), user.getRoles(), user.getResources(), user.getAuthorities())
+                                , user.getMfaRegistered(), user.getRoles(), user.getResources(), /*user.getAuthorities()*/ AuthorityUtils.createAuthorityList("ADMIN", "DEV", "USER"))
                 ));
             }
         });
