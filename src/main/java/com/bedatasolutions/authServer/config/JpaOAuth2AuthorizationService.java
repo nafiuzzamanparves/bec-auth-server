@@ -1,11 +1,15 @@
 package com.bedatasolutions.authServer.config;
 
 
+import com.bedatasolutions.authServer.dao.UserDao;
 import com.bedatasolutions.authServer.dao.client.Authorization;
 import com.bedatasolutions.authServer.repository.client.AuthorizationRepository;
+import com.bedatasolutions.authServer.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.hibernate.collection.spi.PersistentSet;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.*;
@@ -34,6 +38,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
     private final AuthorizationRepository authorizationRepository;
     private final RegisteredClientRepository registeredClientRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapperTwo = new ObjectMapper();
 
     public JpaOAuth2AuthorizationService(AuthorizationRepository authorizationRepository, RegisteredClientRepository registeredClientRepository) {
         Assert.notNull(authorizationRepository, "authorizationRepository cannot be null");
@@ -45,6 +50,14 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
         this.objectMapper.registerModules(securityModules);
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
+
+        this.objectMapperTwo.registerModules(securityModules);
+        this.objectMapperTwo.registerModule(new OAuth2AuthorizationServerJackson2Module());
+        this.objectMapperTwo.addMixIn(java.sql.Timestamp.class, TimestampMixin.class);
+        this.objectMapperTwo.addMixIn(CustomUserDetails.class, CustomUserDetailsMixin.class);
+        this.objectMapperTwo.addMixIn(UserDao.class, UserDaoMixin.class);
+        this.objectMapperTwo.addMixIn(PersistentSet.class, PersistentSetMixin.class);
+
     }
 
     @Override
@@ -260,7 +273,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
 
     private Map<String, Object> parseMap(String data) {
         try {
-            return this.objectMapper.readValue(data, new TypeReference<>() {
+            return this.objectMapperTwo.readValue(data, new TypeReference<>() {
             });
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);

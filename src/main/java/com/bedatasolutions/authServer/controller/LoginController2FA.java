@@ -96,10 +96,14 @@ public class LoginController2FA {
                              HttpServletRequest request,
                              HttpServletResponse response,
                              @CurrentSecurityContext SecurityContext context) throws ServletException, IOException {
-        if (this.authenticatorService.check(getUser(context).getMfaSecret(), code)) {
-            this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
-        } else {
-            this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
+        try {
+            if (this.authenticatorService.check(getUser(context).getMfaSecret(), code)) {
+                this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
+            } else {
+                this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
+            }
+        } catch (IOException | ServletException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.bedatasolutions.authServer.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "t_users", schema = "dbo")
-public class UserDao {
+public class UserDao implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,23 +55,23 @@ public class UserDao {
     private Date updatedAt;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isAccountNonExpired;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isAccountNonLocked;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isCredentialsNonExpired;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean enabled;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean isRoleResourceAccess;
 
     private String mfaSecret;
@@ -77,13 +79,14 @@ public class UserDao {
     private String mfaKeyId;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean mfaEnabled;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
+    @ColumnDefault("1")
     private Boolean mfaRegistered;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "map_user_role",
@@ -92,6 +95,7 @@ public class UserDao {
     )
     private Set<RoleDao> roles = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "map_user_resource",
