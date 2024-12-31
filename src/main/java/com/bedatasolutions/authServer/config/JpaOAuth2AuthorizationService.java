@@ -1,14 +1,16 @@
 package com.bedatasolutions.authServer.config;
 
-
 import com.bedatasolutions.authServer.dao.UserDao;
 import com.bedatasolutions.authServer.dao.client.Authorization;
+import com.bedatasolutions.authServer.mixin.CustomUserDetailsMixin;
+import com.bedatasolutions.authServer.mixin.PersistentSetMixin;
+import com.bedatasolutions.authServer.mixin.TimestampMixin;
+import com.bedatasolutions.authServer.mixin.UserDaoMixin;
 import com.bedatasolutions.authServer.repository.client.AuthorizationRepository;
-import com.bedatasolutions.authServer.service.*;
+import com.bedatasolutions.authServer.service.CustomUserDetails;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hibernate.collection.spi.PersistentSet;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
@@ -57,7 +59,6 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         this.objectMapperTwo.addMixIn(CustomUserDetails.class, CustomUserDetailsMixin.class);
         this.objectMapperTwo.addMixIn(UserDao.class, UserDaoMixin.class);
         this.objectMapperTwo.addMixIn(PersistentSet.class, PersistentSetMixin.class);
-
     }
 
     @Override

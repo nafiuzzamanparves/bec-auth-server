@@ -3,24 +3,15 @@ package com.bedatasolutions.authServer.service;
 import com.bedatasolutions.authServer.dao.UserDao;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Collection;
 
-// @JsonDeserialize(as = CustomUserDetails.class)
-public class CustomUserDetails implements UserDetails, Serializable {
+public class CustomUserDetails implements UserDetails {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final UserDao user;
 
-    /* public CustomUserDetails(UserDao user) {
-        this.user = user;
-    } */
     @JsonCreator
     public CustomUserDetails(@JsonProperty("user") UserDao user) {
         this.user = user;

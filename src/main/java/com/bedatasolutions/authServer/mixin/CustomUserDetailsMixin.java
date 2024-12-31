@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.service;
+package com.bedatasolutions.authServer.mixin;
 
 import com.bedatasolutions.authServer.dao.UserDao;
 import com.fasterxml.jackson.annotation.JsonCreator;

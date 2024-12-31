@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.service;
+package com.bedatasolutions.authServer.mixin;
 
 import com.bedatasolutions.authServer.dao.ResourceDao;
 import com.bedatasolutions.authServer.dao.RoleDao;

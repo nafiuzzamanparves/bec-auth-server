@@ -26,7 +26,7 @@ public class MFAHandler implements AuthenticationSuccessHandler {
     private final String authority;
 
     public MFAHandler(String successUrl, String authority) {
-        // log.info("[MFAHandler] Initializing the MFAHandler constructor with successUrl: {} and authority: {}", successUrl, authority);
+        log.info("[MFAHandler] Initializing the MFAHandler constructor with successUrl: {} and authority: {}", successUrl, authority);
         SimpleUrlAuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler(successUrl);
         authenticationSuccessHandler.setAlwaysUseDefaultTargetUrl(true);
         this.authenticationSuccessHandler = authenticationSuccessHandler;
@@ -37,20 +37,20 @@ public class MFAHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        // log.info("[MFAHandler] Authentication success triggered for user: {}", authentication.getName());
+        log.info("[MFAHandler] Authentication success triggered for user: {}", authentication.getName());
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            // log.info("[MFAHandler] User MFA Enabled: {}", userDetails.getUser().getMfaEnabled());
+            log.info("[MFAHandler] User MFA Enabled: {}", userDetails.getUser().getMfaEnabled());
 
             if (!userDetails.getUser().getMfaEnabled()) {
-                // log.info("[MFAHandler] MFA not enabled for user. Redirecting using mfaNotEnabled handler.");
+                log.info("[MFAHandler] MFA not enabled for user. Redirecting using mfaNotEnabled handler.");
                 mfaNotEnabled.onAuthenticationSuccess(request, response, authentication);
                 return;
             }
         }
 
-        // log.info("[MFAHandler] Saving MFAAuthentication and redirecting to success URL.");
+        log.info("[MFAHandler] Saving MFAAuthentication and redirecting to success URL.");
         saveAuthentication(request, response, new MFAAuthentication(authentication, authority));
         this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
     }
@@ -58,11 +58,11 @@ public class MFAHandler implements AuthenticationSuccessHandler {
     private void saveAuthentication(HttpServletRequest request,
                                     HttpServletResponse response,
                                     MFAAuthentication authentication) {
-        // log.info("[MFAHandler] Saving authentication in SecurityContext.");
+        log.info("[MFAHandler] Saving authentication in SecurityContext.");
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
         securityContextRepository.saveContext(securityContext, request, response);
-        // log.info("[MFAHandler] Authentication saved successfully in SecurityContext.");
+        log.info("[MFAHandler] Authentication saved successfully in SecurityContext.");
     }
 }
