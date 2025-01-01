@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -36,6 +37,7 @@ import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -70,15 +72,15 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/registration", "/authenticator").hasAuthority("ROLE_MFA_REQUIRED")
                         .requestMatchers("/api/v1/resource/protected-resource").hasRole("USER")
-                        // .requestMatchers("/api/v1/resource/secured").hasAuthority("SCOPE_profile")
-                        .requestMatchers("/api/v1/resource/secured").hasRole("USER")
+                        .requestMatchers("/api/v1/resource/secured").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "SCOPE_profile")
+                        // .requestMatchers("/api/v1/resource/secured").hasRole("USER")
                         .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login", "/api/v1/auth/token/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Validate JWT tokens for secured endpoints
-                /*.oauth2ResourceServer((resourceServer) -> resourceServer
+                /* .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(customizer -> customizer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                )*/
+                ) */
                 // Validate JWT tokens for secured endpoints
                 .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(Customizer.withDefaults())
@@ -141,7 +143,7 @@ public class SecurityConfig {
     }
 
     // Custom Token Customizer
-    /*@Bean
+    /* @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
         return (context) -> {
             if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
@@ -160,9 +162,9 @@ public class SecurityConfig {
                 });
             }
         };
-    }*/
+    } */
 
-    /*@Bean
+    /* @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // Optional: Set or remove role prefix
@@ -171,7 +173,7 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return converter;
-    }*/
+    } */
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
