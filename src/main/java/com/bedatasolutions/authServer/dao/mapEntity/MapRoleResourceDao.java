@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.dao.mapEntity;
 
-import com.bedatasolutions.authServer.dao.ResourceDao;
-import com.bedatasolutions.authServer.dao.RoleDao;
+import com.bedatasolutions.authServer.entity.resource.model.Resource;
+import com.bedatasolutions.authServer.entity.role.model.Role;
 import com.bedatasolutions.authServer.dao.compositeKey.MapRoleResourceKey;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,12 +19,12 @@ public class MapRoleResourceDao {
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "role_id", nullable = false)
-    private RoleDao role;
+    private Role role;
 
     @ManyToOne
     @MapsId("resourceId")
     @JoinColumn(name = "resource_id", nullable = false)
-    private ResourceDao resource;
+    private Resource resource;
 
     @Column(nullable = false)
     private String access;

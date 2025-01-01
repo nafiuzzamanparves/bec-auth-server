@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.mixin;
 
-import com.bedatasolutions.authServer.dao.UserDao;
+import com.bedatasolutions.authServer.entity.user.model.User;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public abstract class CustomUserDetailsMixin {
     @JsonCreator
-    public CustomUserDetailsMixin(@JsonProperty("user") UserDao user) {
+    public CustomUserDetailsMixin(@JsonProperty("user") User user) {
     }
 
     @JsonIgnore

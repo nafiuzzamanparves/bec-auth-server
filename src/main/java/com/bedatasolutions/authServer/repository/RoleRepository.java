@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.repository;
 
-import com.bedatasolutions.authServer.dao.RoleDao;
+import com.bedatasolutions.authServer.entity.role.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RoleRepository extends JpaRepository<RoleDao, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 }

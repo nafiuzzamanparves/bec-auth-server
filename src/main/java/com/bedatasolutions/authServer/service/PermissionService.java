@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.service;
 
-import com.bedatasolutions.authServer.dao.PermissionDao;
+import com.bedatasolutions.authServer.entity.permission.model.Permission;
 import com.bedatasolutions.authServer.dto.permission.PermissionCreateDTO;
 import com.bedatasolutions.authServer.dto.permission.PermissionResponseDTO;
 import com.bedatasolutions.authServer.dto.permission.PermissionUpdateDTO;
@@ -27,7 +27,7 @@ public class PermissionService {
     }
 
     // Fetch permission by ID and return as optional DAO
-    public Optional<PermissionDao> getPermissionById(Long id) {
+    public Optional<Permission> getPermissionById(Long id) {
         return permissionRepository.findById(id);
     }
 
@@ -40,8 +40,8 @@ public class PermissionService {
 
     // Save a new permission
     public PermissionResponseDTO savePermission(PermissionCreateDTO permission) {
-        PermissionDao permissionDao = mapToEntity(permission);
-        PermissionDao saved = permissionRepository.save(permissionDao);
+        Permission permissionDao = mapToEntity(permission);
+        Permission saved = permissionRepository.save(permissionDao);
         return mapToResponseDTO(saved);
     }
 
@@ -57,24 +57,24 @@ public class PermissionService {
                     if (updateDTO.getDescription() != null) {
                         existingPermission.setDescription(updateDTO.getDescription());
                     }
-                    PermissionDao updated = permissionRepository.save(existingPermission);
+                    Permission updated = permissionRepository.save(existingPermission);
                     return mapToResponseDTO(updated);
                 })
                 .orElse(null);
     }
 
     // Utility: Map PermissionDao to PermissionResponseDTO
-    private PermissionResponseDTO mapToResponseDTO(PermissionDao permissionDao) {
+    private PermissionResponseDTO mapToResponseDTO(Permission permission) {
         PermissionResponseDTO dto = new PermissionResponseDTO();
-        dto.setId(permissionDao.getId());
-        dto.setDescription(permissionDao.getDescription());
+        dto.setId(permission.getId());
+        dto.setDescription(permission.getDescription());
         return dto;
     }
 
     // Utility: Map PermissionCreateDTO to PermissionDao
-    private PermissionDao mapToEntity(PermissionCreateDTO createDTO) {
-        PermissionDao permissionDao = new PermissionDao();
-        permissionDao.setDescription(createDTO.getDescription());
-        return permissionDao;
+    private Permission mapToEntity(PermissionCreateDTO createDTO) {
+        Permission permission = new Permission();
+        permission.setDescription(createDTO.getDescription());
+        return permission;
     }
 }

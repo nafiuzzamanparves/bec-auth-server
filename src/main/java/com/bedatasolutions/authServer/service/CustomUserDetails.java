@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.service;
 
-import com.bedatasolutions.authServer.dao.UserDao;
+import com.bedatasolutions.authServer.entity.user.model.User;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,10 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public record CustomUserDetails(UserDao user) implements UserDetails {
+public record CustomUserDetails(User user) implements UserDetails {
 
     @JsonCreator
-    public CustomUserDetails(@JsonProperty("user") UserDao user) {
+    public CustomUserDetails(@JsonProperty("user") User user) {
         this.user = user;
     }
 
@@ -51,8 +51,8 @@ public record CustomUserDetails(UserDao user) implements UserDetails {
     }
 
     @Override
-    public UserDao user() {
-        return new UserDao(user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getAge(), user.getAddress()
+    public User user() {
+        return new User(user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getAge(), user.getAddress()
                 , user.getPassword(), user.getCreatedAt(), user.getUpdatedAt(), user.getIsAccountNonExpired(), user.getIsAccountNonLocked()
                 , user.getIsCredentialsNonExpired(), user.getEnabled(), user.getIsRoleResourceAccess(), user.getMfaSecret()
                 , user.getMfaKeyId(), user.getMfaEnabled(), user.getMfaRegistered(), user.getRoles(), user.getResources(), user.getAuthorities());

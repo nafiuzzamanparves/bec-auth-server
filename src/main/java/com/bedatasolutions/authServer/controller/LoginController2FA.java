@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.controller;
 
-import com.bedatasolutions.authServer.dao.UserDao;
+import com.bedatasolutions.authServer.entity.user.model.User;
 import com.bedatasolutions.authServer.security.MFAAuthentication;
 import com.bedatasolutions.authServer.service.AuthenticatorService;
 import com.bedatasolutions.authServer.service.CustomUserDetails;
@@ -118,7 +118,7 @@ public class LoginController2FA {
         return mfaAuthentication.getPrimaryAuthentication();
     }
 
-    private UserDao getUser(SecurityContext context) {
+    private User getUser(SecurityContext context) {
         MFAAuthentication mfaAuthentication = (MFAAuthentication) context.getAuthentication();
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) mfaAuthentication.getPrimaryAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) usernamePasswordAuthenticationToken.getPrincipal();

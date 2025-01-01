@@ -69,8 +69,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/registration", "/authenticator").hasAuthority("ROLE_MFA_REQUIRED")
-                        .requestMatchers("/security-question").hasAuthority("ROLE_SECURITY_QUESTION_REQUIRED")
-                        .requestMatchers("/api/v1/resource/protected-resource", "/api/v1/resource/secured").hasRole("USER")
+                        .requestMatchers("/api/v1/resource/protected-resource").hasRole("USER")
+                        // .requestMatchers("/api/v1/resource/secured").hasAuthority("SCOPE_profile")
+                        .requestMatchers("/api/v1/resource/secured").hasRole("USER")
                         .requestMatchers("/api/v1/resource/public", "/api/v1/auth/login", "/api/v1/auth/token/refresh").permitAll()
                         .anyRequest().authenticated()
                 )

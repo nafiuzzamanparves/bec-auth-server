@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.dao.mapEntity;
 
-import com.bedatasolutions.authServer.dao.PermissionDao;
-import com.bedatasolutions.authServer.dao.ResourceDao;
+import com.bedatasolutions.authServer.entity.permission.model.Permission;
+import com.bedatasolutions.authServer.entity.resource.model.Resource;
 import com.bedatasolutions.authServer.dao.compositeKey.MapResourcePermissionKey;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,12 +19,12 @@ public class MapResourcePermissionDao {
     @ManyToOne
     @MapsId("resourceId")
     @JoinColumn(name = "resource_id", nullable = false)
-    private ResourceDao resource;
+    private Resource resource;
 
     @ManyToOne
     @MapsId("permissionId")
     @JoinColumn(name = "permission_id", nullable = false)
-    private PermissionDao permission;
+    private Permission permission;
 
     // The 'access' field is for storing the access or other related information.
     @Column(name = "access", nullable = false)

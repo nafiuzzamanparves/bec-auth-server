@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.mixin;
 
-import com.bedatasolutions.authServer.dao.ResourceDao;
-import com.bedatasolutions.authServer.dao.RoleDao;
+import com.bedatasolutions.authServer.entity.resource.model.Resource;
+import com.bedatasolutions.authServer.entity.role.model.Role;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,8 +30,8 @@ public abstract class UserDaoMixin {
             @JsonProperty("mfaKeyId") String mfaKeyId,
             @JsonProperty("mfaEnabled") Boolean mfaEnabled,
             @JsonProperty("mfaRegistered") Boolean mfaRegistered,
-            @JsonProperty("roles") Set<RoleDao> roles,
-            @JsonProperty("resources") Set<ResourceDao> resources,
+            @JsonProperty("roles") Set<Role> roles,
+            @JsonProperty("resources") Set<Resource> resources,
             @JsonProperty("authorities") Set<GrantedAuthority> authorities
     ) {
     }

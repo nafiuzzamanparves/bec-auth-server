@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.config;
 
-import com.bedatasolutions.authServer.dao.UserDao;
 import com.bedatasolutions.authServer.dao.client.Authorization;
+import com.bedatasolutions.authServer.entity.user.model.User;
 import com.bedatasolutions.authServer.mixin.CustomUserDetailsMixin;
 import com.bedatasolutions.authServer.mixin.PersistentSetMixin;
 import com.bedatasolutions.authServer.mixin.TimestampMixin;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,9 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
 
         this.objectMapperTwo.registerModules(securityModules);
         this.objectMapperTwo.registerModule(new OAuth2AuthorizationServerJackson2Module());
-        this.objectMapperTwo.addMixIn(java.sql.Timestamp.class, TimestampMixin.class);
+        this.objectMapperTwo.addMixIn(Timestamp.class, TimestampMixin.class);
         this.objectMapperTwo.addMixIn(CustomUserDetails.class, CustomUserDetailsMixin.class);
-        this.objectMapperTwo.addMixIn(UserDao.class, UserDaoMixin.class);
+        this.objectMapperTwo.addMixIn(User.class, UserDaoMixin.class);
         this.objectMapperTwo.addMixIn(PersistentSet.class, PersistentSetMixin.class);
     }
 
