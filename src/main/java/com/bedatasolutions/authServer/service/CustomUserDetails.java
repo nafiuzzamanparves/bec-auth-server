@@ -8,9 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class CustomUserDetails implements UserDetails {
-
-    private final UserDao user;
+public record CustomUserDetails(UserDao user) implements UserDetails {
 
     @JsonCreator
     public CustomUserDetails(@JsonProperty("user") UserDao user) {
@@ -52,7 +50,8 @@ public class CustomUserDetails implements UserDetails {
         return user.getEnabled();
     }
 
-    public UserDao getUser() {
+    @Override
+    public UserDao user() {
         return new UserDao(user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getAge(), user.getAddress()
                 , user.getPassword(), user.getCreatedAt(), user.getUpdatedAt(), user.getIsAccountNonExpired(), user.getIsAccountNonLocked()
                 , user.getIsCredentialsNonExpired(), user.getEnabled(), user.getIsRoleResourceAccess(), user.getMfaSecret()

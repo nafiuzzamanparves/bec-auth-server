@@ -8,6 +8,7 @@ import com.bedatasolutions.authServer.service.CustomUserDetailsService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+@Slf4j
 @Controller
 public class LoginController2FA {
 
@@ -62,7 +64,7 @@ public class LoginController2FA {
         try {
             generatedCode = authenticatorService.getCode(base32Secret);
         } catch (GeneralSecurityException e) {
-            e.printStackTrace();
+            log.error("Error generating code", e);
         }
         System.err.println(generatedCode);
         model.addAttribute("qrImage", authenticatorService.generateQrImageUrl(keyId, base32Secret));
@@ -84,7 +86,7 @@ public class LoginController2FA {
     }
 
     @GetMapping("/authenticator")
-    public String authenticator(@CurrentSecurityContext SecurityContext context) throws GeneralSecurityException {
+    public String authenticator(@CurrentSecurityContext SecurityContext context) {
         if (!getUser(context).getMfaRegistered()) {
             return "redirect:registration";
         }
@@ -95,7 +97,7 @@ public class LoginController2FA {
     public void validateCode(@RequestParam("code") String code,
                              HttpServletRequest request,
                              HttpServletResponse response,
-                             @CurrentSecurityContext SecurityContext context) throws ServletException, IOException {
+                             @CurrentSecurityContext SecurityContext context) {
         try {
             if (this.authenticatorService.check(getUser(context).getMfaSecret(), code)) {
                 this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, getAuthentication(request, response));
@@ -103,7 +105,7 @@ public class LoginController2FA {
                 this.authenticatorFailureHandler.onAuthenticationFailure(request, response, new BadCredentialsException("bad credentials"));
             }
         } catch (IOException | ServletException e) {
-            e.printStackTrace();
+            log.error("Error validating code", e);
         }
     }
 
@@ -120,6 +122,6 @@ public class LoginController2FA {
         MFAAuthentication mfaAuthentication = (MFAAuthentication) context.getAuthentication();
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) mfaAuthentication.getPrimaryAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) usernamePasswordAuthenticationToken.getPrincipal();
-        return userDetails.getUser();
+        return userDetails.user();
     }
 }

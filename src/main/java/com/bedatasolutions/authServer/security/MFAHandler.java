@@ -41,9 +41,9 @@ public class MFAHandler implements AuthenticationSuccessHandler {
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            log.info("[MFAHandler] User MFA Enabled: {}", userDetails.getUser().getMfaEnabled());
+            log.info("[MFAHandler] User MFA Enabled: {}", userDetails.user().getMfaEnabled());
 
-            if (!userDetails.getUser().getMfaEnabled()) {
+            if (!userDetails.user().getMfaEnabled()) {
                 log.info("[MFAHandler] MFA not enabled for user. Redirecting using mfaNotEnabled handler.");
                 mfaNotEnabled.onAuthenticationSuccess(request, response, authentication);
                 return;

@@ -1,9 +1,9 @@
 package com.bedatasolutions.authServer.dto;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@SuppressWarnings("unused")
 public class ApiResponse<T> {
 
     private String status;  // "success" or "error"
@@ -68,7 +68,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>("success", message, data);
     }
 
-    public static <T> ApiResponse<T> success( String message) {
+    public static <T> ApiResponse<T> success(String message) {
         return new ApiResponse<>("success", message, null);
     }
 
