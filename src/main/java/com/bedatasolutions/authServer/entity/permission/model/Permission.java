@@ -14,11 +14,14 @@ import java.util.Set;
 @Table(name = "t_permission", schema = "dbo")
 public class Permission {
 
-    @Column(name = "tx_desc", nullable = false)
-    public String description;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "tx_desc", nullable = false)
+    private String description;
+
     @ManyToMany(mappedBy = "permissions")
     private Set<Resource> resources = new HashSet<>();
+
 }

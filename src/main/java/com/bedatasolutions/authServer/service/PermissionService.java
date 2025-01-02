@@ -1,9 +1,9 @@
 package com.bedatasolutions.authServer.service;
 
-import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionCreateDTO;
-import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionResponseDTO;
-import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionUpdateDTO;
 import com.bedatasolutions.authServer.entity.permission.model.Permission;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionCreateDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionResponseDTOImpl;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionUpdateDTO;
 import com.bedatasolutions.authServer.repository.PermissionRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class PermissionService {
     }
 
     // Fetch all permissions and map to DTOs
-    public List<PermissionResponseDTO> getAllPermissions() {
+    public List<PermissionResponseDTOImpl> getAllPermissions() {
         return permissionRepository.findAll().stream()
                 .map(this::mapToResponseDTO)
                 .toList();
@@ -32,14 +32,14 @@ public class PermissionService {
     }
 
     // Fetch permission by ID and map to DTO
-    public PermissionResponseDTO getPermissionResponseById(Long id) {
+    public PermissionResponseDTOImpl getPermissionResponseById(Long id) {
         return permissionRepository.findById(id)
                 .map(this::mapToResponseDTO)
                 .orElse(null);
     }
 
     // Save a new permission
-    public PermissionResponseDTO savePermission(PermissionCreateDTO permissionCreateDTO) {
+    public PermissionResponseDTOImpl savePermission(PermissionCreateDTO permissionCreateDTO) {
         Permission permission = mapToEntity(permissionCreateDTO);
         Permission saved = permissionRepository.save(permission);
         return mapToResponseDTO(saved);
@@ -51,7 +51,7 @@ public class PermissionService {
     }
 
     // Update existing permission
-    public PermissionResponseDTO updatePermission(Long id, PermissionUpdateDTO permissionUpdateDTO) {
+    public PermissionResponseDTOImpl updatePermission(Long id, PermissionUpdateDTO permissionUpdateDTO) {
         return permissionRepository.findById(id)
                 .map(existingPermission -> {
                     if (permissionUpdateDTO.getDescription() != null) {
@@ -64,11 +64,8 @@ public class PermissionService {
     }
 
     // Utility: Map PermissionDao to PermissionResponseDTO
-    private PermissionResponseDTO mapToResponseDTO(Permission permission) {
-        PermissionResponseDTO dto = new PermissionResponseDTO();
-        dto.setId(permission.getId());
-        dto.setDescription(permission.getDescription());
-        return dto;
+    private PermissionResponseDTOImpl mapToResponseDTO(Permission permission) {
+        return new PermissionResponseDTOImpl(permission);
     }
 
     // Utility: Map PermissionCreateDTO to PermissionDao

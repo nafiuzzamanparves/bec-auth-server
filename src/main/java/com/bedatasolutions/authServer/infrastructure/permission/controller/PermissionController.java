@@ -2,7 +2,7 @@ package com.bedatasolutions.authServer.infrastructure.permission.controller;
 
 import com.bedatasolutions.authServer.infrastructure.common.dto.ApiResponse;
 import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionCreateDTO;
-import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionResponseDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionResponseDTOImpl;
 import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionUpdateDTO;
 import com.bedatasolutions.authServer.service.PermissionService;
 import jakarta.validation.Valid;
@@ -25,14 +25,14 @@ public class PermissionController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PermissionResponseDTO>>> getAllPermissions() {
-        List<PermissionResponseDTO> permissions = permissionService.getAllPermissions();
+    public ResponseEntity<ApiResponse<List<PermissionResponseDTOImpl>>> getAllPermissions() {
+        List<PermissionResponseDTOImpl> permissions = permissionService.getAllPermissions();
         return ResponseEntity.ok(ApiResponse.success(permissions, "Fetched all permissions successfully"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PermissionResponseDTO>> getPermissionById(@PathVariable Long id) {
-        PermissionResponseDTO responseDTO = permissionService.getPermissionResponseById(id);
+    public ResponseEntity<ApiResponse<PermissionResponseDTOImpl>> getPermissionById(@PathVariable Long id) {
+        PermissionResponseDTOImpl responseDTO = permissionService.getPermissionResponseById(id);
         if (responseDTO != null) {
             return ResponseEntity.ok(ApiResponse.success(responseDTO, "Permission fetched successfully"));
         } else {
@@ -41,14 +41,14 @@ public class PermissionController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<PermissionResponseDTO>> createPermission(@RequestBody @Valid PermissionCreateDTO createDTO) {
-        PermissionResponseDTO createdPermission = permissionService.savePermission(createDTO);
+    public ResponseEntity<ApiResponse<PermissionResponseDTOImpl>> createPermission(@RequestBody @Valid PermissionCreateDTO createDTO) {
+        PermissionResponseDTOImpl createdPermission = permissionService.savePermission(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(createdPermission, "Permission created successfully"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<PermissionResponseDTO>> updatePermission(@PathVariable Long id, @RequestBody @Valid PermissionUpdateDTO updateDTO) {
+    public ResponseEntity<ApiResponse<PermissionResponseDTOImpl>> updatePermission(@PathVariable Long id, @RequestBody @Valid PermissionUpdateDTO updateDTO) {
         return permissionService.updatePermission(id, updateDTO) != null
                 ? ResponseEntity.ok(ApiResponse.success(permissionService.updatePermission(id, updateDTO), "Permission updated successfully"))
                 : ResponseEntity.ok(ApiResponse.failed("Failed to update permission or permission not found"));
