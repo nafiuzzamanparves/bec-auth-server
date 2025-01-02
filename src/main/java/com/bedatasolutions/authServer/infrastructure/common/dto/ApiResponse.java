@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.dto;
+package com.bedatasolutions.authServer.infrastructure.common.dto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

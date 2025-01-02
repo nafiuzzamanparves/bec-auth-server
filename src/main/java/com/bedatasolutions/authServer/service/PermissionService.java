@@ -1,8 +1,8 @@
 package com.bedatasolutions.authServer.service;
 
-import com.bedatasolutions.authServer.dto.permission.PermissionCreateDTO;
-import com.bedatasolutions.authServer.dto.permission.PermissionResponseDTO;
-import com.bedatasolutions.authServer.dto.permission.PermissionUpdateDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionCreateDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionResponseDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionUpdateDTO;
 import com.bedatasolutions.authServer.entity.permission.model.Permission;
 import com.bedatasolutions.authServer.repository.PermissionRepository;
 import org.springframework.stereotype.Service;

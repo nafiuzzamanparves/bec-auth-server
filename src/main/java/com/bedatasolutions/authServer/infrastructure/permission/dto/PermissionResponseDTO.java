@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.dto.permission;
+package com.bedatasolutions.authServer.infrastructure.permission.dto;
 
 public class PermissionResponseDTO {
 

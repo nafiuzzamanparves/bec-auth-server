@@ -1,9 +1,9 @@
 package com.bedatasolutions.authServer.infrastructure.permission.controller;
 
-import com.bedatasolutions.authServer.dto.ApiResponse;
-import com.bedatasolutions.authServer.dto.permission.PermissionCreateDTO;
-import com.bedatasolutions.authServer.dto.permission.PermissionResponseDTO;
-import com.bedatasolutions.authServer.dto.permission.PermissionUpdateDTO;
+import com.bedatasolutions.authServer.infrastructure.common.dto.ApiResponse;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionCreateDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionResponseDTO;
+import com.bedatasolutions.authServer.infrastructure.permission.dto.PermissionUpdateDTO;
 import com.bedatasolutions.authServer.service.PermissionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

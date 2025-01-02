@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.infrastructure.config.exception;
 
-import com.bedatasolutions.authServer.dto.ApiResponse;
+import com.bedatasolutions.authServer.infrastructure.common.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

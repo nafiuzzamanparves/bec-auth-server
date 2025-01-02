@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.infrastructure.common.controller;
 
-import com.bedatasolutions.authServer.dto.LoginRequest;
+import com.bedatasolutions.authServer.infrastructure.common.dto.LoginRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,8 +42,8 @@ public class CustomLoginController {
             log.info("Login method called");
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
-                            loginRequest.getPassword()
+                            loginRequest.username(),
+                            loginRequest.password()
                     )
             );
 
@@ -59,7 +59,7 @@ public class CustomLoginController {
                     .audience(List.of("oidc-client"))
                     .issuedAt(now)
                     .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                    .subject(loginRequest.getUsername())
+                    .subject(loginRequest.username())
                     .claim("roles", roles)
                     .claim("scope", Set.of("openid", "profile"))
                     .build();
@@ -72,7 +72,7 @@ public class CustomLoginController {
                     .audience(List.of("oidc-client"))
                     .issuedAt(now)
                     .expiresAt(now.plus(7, ChronoUnit.DAYS)) // Refresh token valid for 7 days
-                    .subject(loginRequest.getUsername())
+                    .subject(loginRequest.username())
                     .claim("scope", "refresh_token")
                     .build();
 
