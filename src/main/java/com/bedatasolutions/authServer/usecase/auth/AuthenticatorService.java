@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.service;
+package com.bedatasolutions.authServer.usecase.auth;
 
 import org.springframework.stereotype.Service;
 

@@ -2,9 +2,9 @@ package com.bedatasolutions.authServer.infrastructure.common.controller;
 
 import com.bedatasolutions.authServer.entity.user.model.User;
 import com.bedatasolutions.authServer.security.TwoFactorAuth;
-import com.bedatasolutions.authServer.service.AuthenticatorService;
-import com.bedatasolutions.authServer.service.CustomUserDetails;
-import com.bedatasolutions.authServer.service.CustomUserDetailsService;
+import com.bedatasolutions.authServer.usecase.auth.AuthenticatorService;
+import com.bedatasolutions.authServer.usecase.auth.CustomUserDetails;
+import com.bedatasolutions.authServer.usecase.auth.CustomUserDetailsService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

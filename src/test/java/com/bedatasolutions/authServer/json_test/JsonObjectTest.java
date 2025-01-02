@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.json_test;
 
-import com.bedatasolutions.authServer.service.CustomUserDetails;
+import com.bedatasolutions.authServer.usecase.auth.CustomUserDetails;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

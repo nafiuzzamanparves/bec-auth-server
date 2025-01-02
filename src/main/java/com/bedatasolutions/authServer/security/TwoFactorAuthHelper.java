@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.security;
 
-import com.bedatasolutions.authServer.service.CustomUserDetails;
+import com.bedatasolutions.authServer.usecase.auth.CustomUserDetails;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.service;
+package com.bedatasolutions.authServer.usecase.auth;
 
 import com.bedatasolutions.authServer.entity.user.model.User;
 import com.bedatasolutions.authServer.repository.UserRepository;
