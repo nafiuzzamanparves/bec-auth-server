@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.controller;
+package com.bedatasolutions.authServer.infrastructure.config.exception;
 
 import com.bedatasolutions.authServer.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;

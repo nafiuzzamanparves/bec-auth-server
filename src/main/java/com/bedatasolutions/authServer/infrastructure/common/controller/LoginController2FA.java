@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.controller;
+package com.bedatasolutions.authServer.infrastructure.common.controller;
 
 import com.bedatasolutions.authServer.entity.user.model.User;
 import com.bedatasolutions.authServer.security.TwoFactorAuth;

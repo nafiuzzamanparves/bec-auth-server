@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.controller;
+package com.bedatasolutions.authServer.infrastructure.common.controller;
 
 import com.bedatasolutions.authServer.dto.LoginRequest;
 import org.slf4j.Logger;
@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class LoginController {
+public class CustomLoginController {
 
-    private final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private final Logger log = LoggerFactory.getLogger(CustomLoginController.class);
     private final AuthenticationManager authenticationManager;
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
-    public LoginController(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder, JwtDecoder jwtDecoder) {
+    public CustomLoginController(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder, JwtDecoder jwtDecoder) {
         this.authenticationManager = authenticationManager;
         this.jwtEncoder = jwtEncoder;
         this.jwtDecoder = jwtDecoder;
@@ -125,4 +125,3 @@ public class LoginController {
         }
     }
 }
-

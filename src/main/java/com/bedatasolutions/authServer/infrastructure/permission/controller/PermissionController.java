@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.controller;
+package com.bedatasolutions.authServer.infrastructure.permission.controller;
 
 import com.bedatasolutions.authServer.dto.ApiResponse;
 import com.bedatasolutions.authServer.dto.permission.PermissionCreateDTO;
