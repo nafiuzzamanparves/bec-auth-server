@@ -4,12 +4,10 @@ import com.bedatasolutions.authServer.service.CustomUserDetails;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.util.Map;
 
 public class JsonObjectTest {
 

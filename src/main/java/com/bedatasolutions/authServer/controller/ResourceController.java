@@ -25,7 +25,7 @@ public class ResourceController {
     }
 
     @GetMapping("/check")
-    @PreAuthorize("hasRole('user:read') or hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN') or hasAnyAuthority('SCOPE_profilee')")
+    @PreAuthorize("hasRole('user:read') or hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN') or hasAnyAuthority('SCOPE_profile')")
     public ResponseEntity<String> securedResourceTwo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(authentication.getName());

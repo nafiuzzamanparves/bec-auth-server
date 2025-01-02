@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.controller;
 
 import com.bedatasolutions.authServer.entity.user.model.User;
-import com.bedatasolutions.authServer.security.MFAAuthentication;
+import com.bedatasolutions.authServer.security.TwoFactorAuth;
 import com.bedatasolutions.authServer.service.AuthenticatorService;
 import com.bedatasolutions.authServer.service.CustomUserDetails;
 import com.bedatasolutions.authServer.service.CustomUserDetailsService;
@@ -111,16 +111,16 @@ public class LoginController2FA {
 
     private Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        MFAAuthentication mfaAuthentication = (MFAAuthentication) securityContext.getAuthentication();
-        securityContext.setAuthentication(mfaAuthentication.getPrimaryAuthentication());
+        TwoFactorAuth twoFactorAuth = (TwoFactorAuth) securityContext.getAuthentication();
+        securityContext.setAuthentication(twoFactorAuth.getPrimaryAuthentication());
         SecurityContextHolder.setContext(securityContext);
         securityContextRepository.saveContext(securityContext, request, response);
-        return mfaAuthentication.getPrimaryAuthentication();
+        return twoFactorAuth.getPrimaryAuthentication();
     }
 
     private User getUser(SecurityContext context) {
-        MFAAuthentication mfaAuthentication = (MFAAuthentication) context.getAuthentication();
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) mfaAuthentication.getPrimaryAuthentication();
+        TwoFactorAuth twoFactorAuth = (TwoFactorAuth) context.getAuthentication();
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) twoFactorAuth.getPrimaryAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) usernamePasswordAuthenticationToken.getPrincipal();
         return userDetails.user();
     }

@@ -23,6 +23,23 @@ public class ApiResponse<T> {
         this.timestamp = getCurrentTimestamp();
     }
 
+    // Utility methods to return common responses
+    public static <T> ApiResponse<T> success(T data, String message) {
+        return new ApiResponse<>("success", message, data);
+    }
+
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>("success", message, null);
+    }
+
+    public static <T> ApiResponse<T> failed(String message) {
+        return new ApiResponse<>("failed", message, null);
+    }
+
+    public static <T> ApiResponse<T> error(String message) {
+        return new ApiResponse<>("error", message, null);
+    }
+
     // Utility method to get the current date formatted as dd/MM/yyyy
     private String getCurrentTimestamp() {
         LocalDate now = LocalDate.now();
@@ -61,22 +78,5 @@ public class ApiResponse<T> {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
-    }
-
-    // Utility methods to return common responses
-    public static <T> ApiResponse<T> success(T data, String message) {
-        return new ApiResponse<>("success", message, data);
-    }
-
-    public static <T> ApiResponse<T> success(String message) {
-        return new ApiResponse<>("success", message, null);
-    }
-
-    public static <T> ApiResponse<T> failed(String message) {
-        return new ApiResponse<>("failed", message, null);
-    }
-
-    public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>("error", message, null);
     }
 }

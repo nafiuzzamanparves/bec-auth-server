@@ -1,11 +1,11 @@
 package com.bedatasolutions.authServer.config;
 
-import com.bedatasolutions.authServer.dao.client.Authorization;
+import com.bedatasolutions.authServer.entity.client.Authorization;
 import com.bedatasolutions.authServer.entity.user.model.User;
 import com.bedatasolutions.authServer.mixin.CustomUserDetailsMixin;
 import com.bedatasolutions.authServer.mixin.PersistentSetMixin;
 import com.bedatasolutions.authServer.mixin.TimestampMixin;
-import com.bedatasolutions.authServer.mixin.UserDaoMixin;
+import com.bedatasolutions.authServer.mixin.UserMixin;
 import com.bedatasolutions.authServer.repository.client.AuthorizationRepository;
 import com.bedatasolutions.authServer.service.CustomUserDetails;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -58,8 +58,21 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         this.objectMapperTwo.registerModule(new OAuth2AuthorizationServerJackson2Module());
         this.objectMapperTwo.addMixIn(Timestamp.class, TimestampMixin.class);
         this.objectMapperTwo.addMixIn(CustomUserDetails.class, CustomUserDetailsMixin.class);
-        this.objectMapperTwo.addMixIn(User.class, UserDaoMixin.class);
+        this.objectMapperTwo.addMixIn(User.class, UserMixin.class);
         this.objectMapperTwo.addMixIn(PersistentSet.class, PersistentSetMixin.class);
+    }
+
+    private static AuthorizationGrantType resolveAuthorizationGrantType(String authorizationGrantType) {
+        if (AuthorizationGrantType.AUTHORIZATION_CODE.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.AUTHORIZATION_CODE;
+        } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.CLIENT_CREDENTIALS;
+        } else if (AuthorizationGrantType.REFRESH_TOKEN.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.REFRESH_TOKEN;
+        } else if (AuthorizationGrantType.DEVICE_CODE.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.DEVICE_CODE;
+        }
+        return new AuthorizationGrantType(authorizationGrantType);              // Custom authorization grant type
     }
 
     @Override
@@ -288,18 +301,5 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-    }
-
-    private static AuthorizationGrantType resolveAuthorizationGrantType(String authorizationGrantType) {
-        if (AuthorizationGrantType.AUTHORIZATION_CODE.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.AUTHORIZATION_CODE;
-        } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.CLIENT_CREDENTIALS;
-        } else if (AuthorizationGrantType.REFRESH_TOKEN.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.REFRESH_TOKEN;
-        } else if (AuthorizationGrantType.DEVICE_CODE.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.DEVICE_CODE;
-        }
-        return new AuthorizationGrantType(authorizationGrantType);              // Custom authorization grant type
     }
 }

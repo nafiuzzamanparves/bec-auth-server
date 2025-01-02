@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.dao.compositeKey;
+package com.bedatasolutions.authServer.entity.compositeKey;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -14,21 +14,21 @@ import java.util.Objects;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class MapResourcePermissionKey implements Serializable {
+public class MapUserRoleKey implements Serializable {
 
-    private Long resourceId;
-    private Long permissionId;
+    private Long userId;
+    private Long roleId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MapResourcePermissionKey that = (MapResourcePermissionKey) o;
-        return Objects.equals(resourceId, that.resourceId) && Objects.equals(permissionId, that.permissionId);
+        MapUserRoleKey that = (MapUserRoleKey) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(roleId, that.roleId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resourceId, permissionId);
+        return Objects.hash(userId, roleId);
     }
 }

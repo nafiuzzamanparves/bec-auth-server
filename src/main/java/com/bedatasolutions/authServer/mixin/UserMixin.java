@@ -8,10 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
 
-public abstract class UserDaoMixin {
+public abstract class UserMixin {
 
     @JsonCreator
-    public UserDaoMixin(
+    public UserMixin(
             @JsonProperty("id") Long id,
             @JsonProperty("fullName") String fullName,
             @JsonProperty("email") String email,

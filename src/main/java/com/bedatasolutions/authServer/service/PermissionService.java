@@ -1,9 +1,9 @@
 package com.bedatasolutions.authServer.service;
 
-import com.bedatasolutions.authServer.entity.permission.model.Permission;
 import com.bedatasolutions.authServer.dto.permission.PermissionCreateDTO;
 import com.bedatasolutions.authServer.dto.permission.PermissionResponseDTO;
 import com.bedatasolutions.authServer.dto.permission.PermissionUpdateDTO;
+import com.bedatasolutions.authServer.entity.permission.model.Permission;
 import com.bedatasolutions.authServer.repository.PermissionRepository;
 import org.springframework.stereotype.Service;
 
@@ -39,9 +39,9 @@ public class PermissionService {
     }
 
     // Save a new permission
-    public PermissionResponseDTO savePermission(PermissionCreateDTO permission) {
-        Permission permissionDao = mapToEntity(permission);
-        Permission saved = permissionRepository.save(permissionDao);
+    public PermissionResponseDTO savePermission(PermissionCreateDTO permissionCreateDTO) {
+        Permission permission = mapToEntity(permissionCreateDTO);
+        Permission saved = permissionRepository.save(permission);
         return mapToResponseDTO(saved);
     }
 
@@ -51,11 +51,11 @@ public class PermissionService {
     }
 
     // Update existing permission
-    public PermissionResponseDTO updatePermission(Long id, PermissionUpdateDTO updateDTO) {
+    public PermissionResponseDTO updatePermission(Long id, PermissionUpdateDTO permissionUpdateDTO) {
         return permissionRepository.findById(id)
                 .map(existingPermission -> {
-                    if (updateDTO.getDescription() != null) {
-                        existingPermission.setDescription(updateDTO.getDescription());
+                    if (permissionUpdateDTO.getDescription() != null) {
+                        existingPermission.setDescription(permissionUpdateDTO.getDescription());
                     }
                     Permission updated = permissionRepository.save(existingPermission);
                     return mapToResponseDTO(updated);

@@ -1,8 +1,8 @@
-package com.bedatasolutions.authServer.dao.mapEntity;
+package com.bedatasolutions.authServer.entity.map;
 
+import com.bedatasolutions.authServer.entity.compositeKey.MapResourcePermissionKey;
 import com.bedatasolutions.authServer.entity.permission.model.Permission;
 import com.bedatasolutions.authServer.entity.resource.model.Resource;
-import com.bedatasolutions.authServer.dao.compositeKey.MapResourcePermissionKey;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "map_resource_permission", schema = "dbo")
-public class MapResourcePermissionDao {
+public class MapResourcePermission {
 
     @EmbeddedId
     private MapResourcePermissionKey id;

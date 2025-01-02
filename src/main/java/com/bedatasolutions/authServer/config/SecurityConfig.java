@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.config;
 
 import com.bedatasolutions.authServer.security.CustomFailureHandler;
-import com.bedatasolutions.authServer.security.MFAHandler;
+import com.bedatasolutions.authServer.security.TwoFactorAuthHelper;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -39,6 +39,18 @@ import java.util.UUID;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private static KeyPair generateRsaKey() {
+        KeyPair keyPair;
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);
+            keyPair = keyPairGenerator.generateKeyPair();
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+        return keyPair;
+    }
 
     @Bean
     @Order(1)
@@ -88,7 +100,7 @@ public class SecurityConfig {
                 // Form login handles the redirect to the login page from the authorization server filter chain
                 .formLogin(formLogin -> formLogin
                                 .loginPage("/login")
-                                .successHandler(new MFAHandler("/authenticator", "ROLE_MFA_REQUIRED"))
+                                .successHandler(new TwoFactorAuthHelper("/authenticator", "ROLE_MFA_REQUIRED"))
                                 .failureHandler(new CustomFailureHandler("/login?error"))
 //                        .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"))
                 );
@@ -113,18 +125,6 @@ public class SecurityConfig {
                 .build();
         JWKSet jwkSet = new JWKSet(rsaKey);
         return new ImmutableJWKSet<>(jwkSet);
-    }
-
-    private static KeyPair generateRsaKey() {
-        KeyPair keyPair;
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(2048);
-            keyPair = keyPairGenerator.generateKeyPair();
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
-        }
-        return keyPair;
     }
 
     @Bean

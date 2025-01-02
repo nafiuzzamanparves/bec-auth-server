@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.config;
 
-import com.bedatasolutions.authServer.dao.client.Client;
+import com.bedatasolutions.authServer.entity.client.Client;
 import com.bedatasolutions.authServer.repository.client.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;

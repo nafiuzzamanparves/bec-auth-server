@@ -1,8 +1,8 @@
-package com.bedatasolutions.authServer.dao.mapEntity;
+package com.bedatasolutions.authServer.entity.map;
 
+import com.bedatasolutions.authServer.entity.compositeKey.MapUserRoleKey;
 import com.bedatasolutions.authServer.entity.role.model.Role;
 import com.bedatasolutions.authServer.entity.user.model.User;
-import com.bedatasolutions.authServer.dao.compositeKey.MapUserRoleKey;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "map_user_role", schema = "dbo")
-public class MapUserRoleDao {
+public class MapUserRole {
 
     @EmbeddedId
     private MapUserRoleKey id;

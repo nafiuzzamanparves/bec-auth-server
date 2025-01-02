@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.dao.client;
+package com.bedatasolutions.authServer.entity.client;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

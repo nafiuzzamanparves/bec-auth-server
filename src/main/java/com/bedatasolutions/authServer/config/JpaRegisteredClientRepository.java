@@ -1,6 +1,6 @@
 package com.bedatasolutions.authServer.config;
 
-import com.bedatasolutions.authServer.dao.client.Client;
+import com.bedatasolutions.authServer.entity.client.Client;
 import com.bedatasolutions.authServer.repository.client.ClientRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
@@ -35,6 +35,28 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
         this.objectMapper.registerModules(securityModules);
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
+    }
+
+    private static AuthorizationGrantType resolveAuthorizationGrantType(String authorizationGrantType) {
+        if (AuthorizationGrantType.AUTHORIZATION_CODE.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.AUTHORIZATION_CODE;
+        } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.CLIENT_CREDENTIALS;
+        } else if (AuthorizationGrantType.REFRESH_TOKEN.getValue().equals(authorizationGrantType)) {
+            return AuthorizationGrantType.REFRESH_TOKEN;
+        }
+        return new AuthorizationGrantType(authorizationGrantType);              // Custom authorization grant type
+    }
+
+    private static ClientAuthenticationMethod resolveClientAuthenticationMethod(String clientAuthenticationMethod) {
+        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.getValue().equals(clientAuthenticationMethod)) {
+            return ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+        } else if (ClientAuthenticationMethod.CLIENT_SECRET_POST.getValue().equals(clientAuthenticationMethod)) {
+            return ClientAuthenticationMethod.CLIENT_SECRET_POST;
+        } else if (ClientAuthenticationMethod.NONE.getValue().equals(clientAuthenticationMethod)) {
+            return ClientAuthenticationMethod.NONE;
+        }
+        return new ClientAuthenticationMethod(clientAuthenticationMethod);      // Custom client authentication method
     }
 
     @Override
@@ -134,27 +156,5 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-    }
-
-    private static AuthorizationGrantType resolveAuthorizationGrantType(String authorizationGrantType) {
-        if (AuthorizationGrantType.AUTHORIZATION_CODE.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.AUTHORIZATION_CODE;
-        } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.CLIENT_CREDENTIALS;
-        } else if (AuthorizationGrantType.REFRESH_TOKEN.getValue().equals(authorizationGrantType)) {
-            return AuthorizationGrantType.REFRESH_TOKEN;
-        }
-        return new AuthorizationGrantType(authorizationGrantType);              // Custom authorization grant type
-    }
-
-    private static ClientAuthenticationMethod resolveClientAuthenticationMethod(String clientAuthenticationMethod) {
-        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.getValue().equals(clientAuthenticationMethod)) {
-            return ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
-        } else if (ClientAuthenticationMethod.CLIENT_SECRET_POST.getValue().equals(clientAuthenticationMethod)) {
-            return ClientAuthenticationMethod.CLIENT_SECRET_POST;
-        } else if (ClientAuthenticationMethod.NONE.getValue().equals(clientAuthenticationMethod)) {
-            return ClientAuthenticationMethod.NONE;
-        }
-        return new ClientAuthenticationMethod(clientAuthenticationMethod);      // Custom client authentication method
     }
 }

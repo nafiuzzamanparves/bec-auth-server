@@ -6,13 +6,13 @@ import org.springframework.security.core.authority.AuthorityUtils;
 
 import java.io.Serial;
 
-public class MFAAuthentication extends AnonymousAuthenticationToken {
+public class TwoFactorAuth extends AnonymousAuthenticationToken {
 
     @Serial
     private static final long serialVersionUID = 1L;
     private final Authentication primaryAuthentication;
 
-    public MFAAuthentication(Authentication authentication, String authority) {
+    public TwoFactorAuth(Authentication authentication, String authority) {
         super("anonymous", "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS", authority));
         this.primaryAuthentication = authentication;
     }
