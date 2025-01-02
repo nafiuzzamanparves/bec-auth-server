@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.config;
+package com.bedatasolutions.authServer.infrastructure.client.config;
 
 import com.bedatasolutions.authServer.entity.client.Authorization;
 import com.bedatasolutions.authServer.entity.user.model.User;

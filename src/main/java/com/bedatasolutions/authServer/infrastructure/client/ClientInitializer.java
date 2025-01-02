@@ -1,6 +1,8 @@
-package com.bedatasolutions.authServer.config;
+/*
+package com.bedatasolutions.authServer.infrastructure.client;
 
 import com.bedatasolutions.authServer.entity.client.Client;
+import com.bedatasolutions.authServer.infrastructure.client.config.JpaRegisteredClientRepository;
 import com.bedatasolutions.authServer.repository.client.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -16,12 +18,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class AppInitializer implements CommandLineRunner {
+public class ClientInitializer implements CommandLineRunner {
 
     private final JpaRegisteredClientRepository registeredClientRepository;
     private final ClientRepository clientRepository;
 
-    public AppInitializer(JpaRegisteredClientRepository registeredClientRepository, ClientRepository clientRepository) {
+    public ClientInitializer(JpaRegisteredClientRepository registeredClientRepository, ClientRepository clientRepository) {
         this.registeredClientRepository = registeredClientRepository;
         this.clientRepository = clientRepository;
     }
@@ -52,4 +54,4 @@ public class AppInitializer implements CommandLineRunner {
             System.out.println("Client already exists!");
         }
     }
-}
+}*/

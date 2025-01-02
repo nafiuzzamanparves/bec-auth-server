@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.config;
+package com.bedatasolutions.authServer.infrastructure.client.config;
 
 import com.bedatasolutions.authServer.entity.client.AuthorizationConsent;
 import com.bedatasolutions.authServer.repository.client.AuthorizationConsentRepository;
