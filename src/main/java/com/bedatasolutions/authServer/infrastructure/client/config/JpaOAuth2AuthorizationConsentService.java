@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.infrastructure.client.config;
 
 import com.bedatasolutions.authServer.entity.client.AuthorizationConsent;
-import com.bedatasolutions.authServer.repository.client.AuthorizationConsentRepository;
+import com.bedatasolutions.authServer.infrastructure.config.db.repository.AuthorizationConsentRepository;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

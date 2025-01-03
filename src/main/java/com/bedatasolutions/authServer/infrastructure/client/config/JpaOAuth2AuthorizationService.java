@@ -6,7 +6,7 @@ import com.bedatasolutions.authServer.mixin.CustomUserDetailsMixin;
 import com.bedatasolutions.authServer.mixin.PersistentSetMixin;
 import com.bedatasolutions.authServer.mixin.TimestampMixin;
 import com.bedatasolutions.authServer.mixin.UserMixin;
-import com.bedatasolutions.authServer.repository.client.AuthorizationRepository;
+import com.bedatasolutions.authServer.infrastructure.config.db.repository.AuthorizationRepository;
 import com.bedatasolutions.authServer.usecase.auth.CustomUserDetails;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;

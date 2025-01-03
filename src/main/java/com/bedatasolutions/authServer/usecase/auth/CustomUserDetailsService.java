@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.usecase.auth;
 
 import com.bedatasolutions.authServer.entity.user.model.User;
-import com.bedatasolutions.authServer.repository.UserRepository;
+import com.bedatasolutions.authServer.infrastructure.config.db.repository.UserRepository;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,7 +35,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         new User(user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getAge(), user.getAddress(), user.getPassword()
                                 , user.getCreatedAt(), user.getUpdatedAt(), user.getIsAccountNonExpired(), user.getIsAccountNonLocked(), user.getIsCredentialsNonExpired()
                                 , user.getEnabled(), user.getIsRoleResourceAccess(), user.getMfaSecret(), user.getMfaKeyId(), user.getMfaEnabled()
-                                , user.getMfaRegistered(), user.getRoles(), user.getResources(), /*user.getAuthorities()*/ AuthorityUtils.createAuthorityList("ADMIN", "DEV", "USER"))
+                                , user.getMfaRegistered(), user.getRoles(), user.getResources(), /*user.getAuthorities()*/ AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_DEV", "ROLE_USER"))
                 ));
             }
         });

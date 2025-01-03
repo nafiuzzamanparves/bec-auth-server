@@ -33,5 +33,11 @@ public class ResourceController {
         return ResponseEntity.ok("This is second secured resource.");
     }
 
+    // @PreAuthorize("hasRole('READ')")
+    @GetMapping("/read")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public String read() {
+        return "Read Greetings";
+    }
 
 }

@@ -1,7 +1,7 @@
 package com.bedatasolutions.authServer.infrastructure.client.config;
 
 import com.bedatasolutions.authServer.entity.client.Client;
-import com.bedatasolutions.authServer.repository.client.ClientRepository;
+import com.bedatasolutions.authServer.infrastructure.config.db.repository.ClientRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;

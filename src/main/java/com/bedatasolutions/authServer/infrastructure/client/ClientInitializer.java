@@ -3,7 +3,7 @@ package com.bedatasolutions.authServer.infrastructure.client;
 
 import com.bedatasolutions.authServer.entity.client.Client;
 import com.bedatasolutions.authServer.infrastructure.client.config.JpaRegisteredClientRepository;
-import com.bedatasolutions.authServer.repository.client.ClientRepository;
+import com.bedatasolutions.authServer.infrastructure.config.db.repository.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;

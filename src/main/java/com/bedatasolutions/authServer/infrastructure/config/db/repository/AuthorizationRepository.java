@@ -1,4 +1,4 @@
-package com.bedatasolutions.authServer.repository.client;
+package com.bedatasolutions.authServer.infrastructure.config.db.repository;
 
 import com.bedatasolutions.authServer.entity.client.Authorization;
 import org.springframework.data.jpa.repository.JpaRepository;

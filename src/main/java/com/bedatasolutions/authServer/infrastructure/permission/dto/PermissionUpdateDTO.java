@@ -1,30 +1,12 @@
 package com.bedatasolutions.authServer.infrastructure.permission.dto;
 
+import com.bedatasolutions.authServer.usecase.permission.dto.IPermissionUpdateDTO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class PermissionUpdateDTO {
-
-    @NotNull(message = "ID cannot be null")
-    private Long id;
-
-    @NotNull(message = "Description cannot be null")
-    @Size(min = 3, max = 100, message = "Description must be between 3 and 100 characters")
-    private String description;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+public record PermissionUpdateDTO(
+        @NotNull(message = "Description cannot be null")
+        @Size(min = 3, max = 100, message = "Description must be between 3 and 100 characters")
+        String description
+) implements IPermissionUpdateDTO {
 }
